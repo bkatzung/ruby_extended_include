@@ -1,0 +1,4 @@
+.yardoc
+doc
+extended_include-*.gem
+local_test

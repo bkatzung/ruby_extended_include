@@ -10,14 +10,14 @@
 # The Extended_Include module is a back-end support module. See the Module
 # module extensions for the user interface.
 #
-# Version 0.0.1, 2014-04-17
+# Version 0.0.2, 2014-04-18
 #
 # @author Brian Katzung (briank@kappacs.com), Kappa Computer Solutions, LLC
 # @license Public Domain
 
 module Extended_Include
 
-    VERSION = "0.0.1"
+    VERSION = "0.0.2"
 
     # The extended_include list, by module
     @include_list = {}
@@ -107,8 +107,7 @@ class Module
     # As usual, sub-modules must be defined before reference.
     def include_class_methods (*modules, &block)
 	if !block && modules.empty? && const_defined?(:ClassMethods)
-	    Extended_Include.include_class_methods self, self::ClassMethods,
-	      &block
+	    Extended_Include.include_class_methods self, self::ClassMethods
 	else Extended_Include.include_class_methods self, *modules, &block
 	end
     end

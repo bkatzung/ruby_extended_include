@@ -1,3 +1,9 @@
+2014-04-18 Version 0.0.2
+
+	Code clean-up (Module#include_class_methods no longer calls
+	Extended_Include.include_class_methods with a known-nil
+	&block).
+
 2014-04-17 Version 0.0.1
 
 	Initial version.

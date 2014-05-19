@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name	= "extended_include"
-  s.version	= "0.0.2"
-  s.date	= "2014-04-18"
+  s.version	= "0.0.3"
+  s.date	= "2014-05-19"
   s.authors	= ["Brian Katzung"]
   s.email	= ["briank@kappacs.com"]
   s.homepage	= "http://rubygems.org/gems/extended_include"

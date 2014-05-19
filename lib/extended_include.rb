@@ -10,29 +10,26 @@
 # The Extended_Include module is a back-end support module. See the Module
 # module extensions for the user interface.
 #
-# Version 0.0.2, 2014-04-18
+# Version 0.0.3, 2014-05-19
 #
 # @author Brian Katzung (briank@kappacs.com), Kappa Computer Solutions, LLC
 # @license Public Domain
 
 module Extended_Include
 
-    VERSION = "0.0.2"
+    VERSION = "0.0.3"
 
     # The extended_include list, by module
     @include_list = {}
 
-    # The class methods list, by module
+    # The class-methods-module list, by module
     @class_methods = {}
 
-    # Include additional modules.
+    # Backend for {Module#extended_include}.
     def self.add_includes (base, *modules)
 	(@include_list[base] ||= []).concat modules
 	base.class_exec do
-	    # Note that we reverse here to counter ::include's
-	    # last-to-first behavior in order to achieve first-to-last
-	    # behavior.
-	    include *modules.reverse
+	    modules.each { |mod| include mod }
 	    extend Extended_Include
 	end
     end
@@ -40,10 +37,10 @@ module Extended_Include
     # Return a module's class method list.
     def self.class_methods_for (base)
 	(@class_methods[base] ||= []).uniq!
-	@class_methods[base].reverse
+	@class_methods[base]
     end
 
-    # Include a module's class methods when included.
+    # Backend for {Module#include_class_methods}.
     def self.include_class_methods (base, *modules, &block)
 	(@class_methods[base] ||= []).concat modules
 	@class_methods[base].push Module.new(&block) if block
@@ -56,21 +53,22 @@ module Extended_Include
 	@include_list[base]
     end
 
-    # The #included method extended to other modules' ::included method.
+    # This method is automatically invoked whenever a module that uses
+    # #extended_include or #include_class_methods is included in another
+    # module.
     def included (base)
+	# self is the included module; base is the including module
 	Extended_Include.includes_for(self).each do |mod|
 	    mod.included base if mod.respond_to?(:included) &&
 	      (!base.respond_to?(:superclass) ||
 	      !base.superclass.include?(mod))
 	end
 
-	# Note that we reverse here to counter ::extend's
-	# last-to-first behavior in order to achieve first-to-last
-	# behavior.
 	sources = Extended_Include.class_methods_for self
-	base.class_exec { extend *sources.reverse } unless sources.empty?
+	base.class_exec { sources.each { |mod| extend mod } } unless
+	  sources.empty?
 
-	super base rescue nil
+	super base rescue nil	# chain any other #included methods
     end
 
 end
